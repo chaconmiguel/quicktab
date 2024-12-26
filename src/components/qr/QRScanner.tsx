@@ -3,87 +3,124 @@
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useRouter } from 'next/navigation';
-import { X } from 'lucide-react';
+import { X, Camera } from 'lucide-react';
 
-export default function QRScanner({ onClose }: { onClose: () => void }) {
+interface QRScannerProps {
+  onClose: () => void;
+}
+
+export default function QRScanner({ onClose }: QRScannerProps) {
   const router = useRouter();
-  const qrRef = useRef<Html5Qrcode | null>(null);
-  const [error, setError] = useState<string>('');
-  const [isScanning, setIsScanning] = useState(false);
+  const scannerRef = useRef<Html5Qrcode | null>(null);
+  const [hasScanned, setHasScanned] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Only create the scanner if it hasn't been created yet
-    if (!qrRef.current) {
-      qrRef.current = new Html5Qrcode('qr-reader');
-    }
-
-    const startScanner = async () => {
+    let isMounted = true;
+    
+    const initializeScanner = async () => {
       try {
-        if (!qrRef.current) return;
+        scannerRef.current = new Html5Qrcode('qr-reader', {
+          verbose: false,
+          formatsToSupport: [Html5Qrcode.QrcodeFormat.QR_CODE]
+        });
+        
+        const config = {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+          showTorchButtonIfSupported: true,
+        };
 
-        await qrRef.current.start(
-          { facingMode: "environment" },
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-            aspectRatio: 1,
+        // For iOS, we need to use specific constraints
+        const constraints = {
+          facingMode: "environment",
+          width: { min: 640, ideal: 1280, max: 1920 },
+          height: { min: 480, ideal: 720, max: 1080 }
+        };
+
+        await scannerRef.current.start(
+          constraints,
+          config,
+          async (decodedText) => {
+            if (!hasScanned && isMounted) {
+              setHasScanned(true);
+              
+              if (scannerRef.current?.isScanning) {
+                await scannerRef.current.stop();
+                scannerRef.current = null;
+              }
+              
+              onClose();
+              router.push(`/bill/${decodedText}`);
+            }
           },
-          (decodedText) => {
-            handleSuccess(decodedText);
-          },
-          () => {
-            // Ignore errors during scanning
-          }
+          () => {} // Ignore continuous scanning errors
         );
-        setIsScanning(true);
-      } catch (err) {
-        setError('Camera access denied. Please allow camera access and try again.');
-        setIsScanning(false);
+      } catch (error: any) {
+        console.error('Scanner error:', error);
+        setError('Unable to access camera. Please make sure you\'re using Safari and have granted camera permissions.');
       }
     };
 
-    startScanner();
-
-    // Cleanup function
-    return () => {
-      const stopScanner = async () => {
-        if (qrRef.current && isScanning) {
-          try {
-            await qrRef.current.stop();
-            setIsScanning(false);
-          } catch (err) {
-            // Ignore stop errors during cleanup
-          }
-        }
-      };
-      stopScanner();
-    };
-  }, []);
-
-  const handleSuccess = async (decodedText: string) => {
-    if (qrRef.current && isScanning) {
-      try {
-        await qrRef.current.stop();
-        setIsScanning(false);
-        router.push(`/bill/${decodedText}`);
-        onClose();
-      } catch (err) {
-        console.error("Error stopping scanner:", err);
-      }
+    if (!hasScanned) {
+      initializeScanner();
     }
+
+    return () => {
+      isMounted = false;
+      if (scannerRef.current?.isScanning) {
+        scannerRef.current.stop().then(() => {
+          scannerRef.current = null;
+        }).catch(() => {});
+      }
+    };
+  }, [router, onClose, hasScanned]);
+
+  const handleRetry = () => {
+    setError(null);
+    setHasScanned(false);
   };
 
   const handleClose = async () => {
-    if (qrRef.current && isScanning) {
+    if (scannerRef.current?.isScanning) {
       try {
-        await qrRef.current.stop();
-        setIsScanning(false);
-      } catch (err) {
+        await scannerRef.current.stop();
+        scannerRef.current = null;
+      } catch (error) {
         // Ignore stop errors
       }
     }
     onClose();
   };
+
+  if (error) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div className="bg-white rounded-2xl p-6 mx-4 max-w-sm w-full">
+          <div className="text-center">
+            <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Camera Access Required</h3>
+            <p className="text-sm text-gray-600 mb-4">{error}</p>
+            <div className="space-y-3">
+              <button
+                onClick={handleRetry}
+                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Try Again
+              </button>
+              <button
+                onClick={handleClose}
+                className="w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
@@ -92,7 +129,7 @@ export default function QRScanner({ onClose }: { onClose: () => void }) {
           onClick={handleClose}
           className="absolute -top-12 right-0 text-white p-2 hover:bg-white/10 rounded-full transition-colors"
         >
-          <X className="w-6 h-6" />
+          <X className="h-6 w-6" />
         </button>
 
         <div className="bg-white rounded-2xl overflow-hidden">
@@ -121,13 +158,9 @@ export default function QRScanner({ onClose }: { onClose: () => void }) {
           </div>
 
           <div className="px-4 py-3 bg-gray-50">
-            {error ? (
-              <p className="text-sm text-red-600 text-center">{error}</p>
-            ) : (
-              <p className="text-sm text-gray-600 text-center">
-                Position the QR code within the frame
-              </p>
-            )}
+            <p className="text-sm text-gray-700 text-center">
+              Position the QR code within the frame
+            </p>
           </div>
         </div>
       </div>

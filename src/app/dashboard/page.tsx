@@ -6,7 +6,6 @@ import {
   CreditCard, 
   Camera, 
   LogOut, 
-  Settings, 
   Clock,
   HelpCircle,
   Lock,
@@ -95,7 +94,7 @@ export default function Dashboard() {
                   <button
                     key={tab}
                     onClick={() => handleTabChange(tab)}
-                    className={`w-full flex items-center px-4 py-2 text-sm rounded-md ${
+                    className={`w-full flex items-center px-4 py-3 text-base rounded-lg ${
                       activeTab === tab 
                         ? 'bg-blue-50 text-blue-700' 
                         : 'text-gray-600 hover:bg-gray-50'
@@ -110,7 +109,7 @@ export default function Dashboard() {
                   </button>
                 ))}
                 <button
-                  className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md"
+                  className="w-full flex items-center px-4 py-3 text-base text-red-600 hover:bg-red-50 rounded-lg"
                 >
                   <LogOut className="h-5 w-5 mr-3" />
                   Sign Out
@@ -125,7 +124,7 @@ export default function Dashboard() {
               {/* Profile Section */}
               {activeTab === 'profile' && (
                 <div className="p-4 sm:p-6">
-                  <h2 className="text-xl font-bold mb-6">Profile</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Profile</h2>
                   
                   {/* Profile Picture - Mobile Optimized */}
                   <div className="mb-8 flex flex-col items-center sm:flex-row sm:items-start">
@@ -152,7 +151,7 @@ export default function Dashboard() {
                         </label>
                         <input
                           type="text"
-                          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base"
+                          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base text-gray-900"
                         />
                       </div>
                       <div>
@@ -161,7 +160,7 @@ export default function Dashboard() {
                         </label>
                         <input
                           type="email"
-                          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base"
+                          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base text-gray-900"
                         />
                       </div>
                     </div>
@@ -173,7 +172,7 @@ export default function Dashboard() {
                       </label>
                       <input
                         type="date"
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base text-gray-900"
                       />
                     </div>
                     
@@ -193,7 +192,7 @@ export default function Dashboard() {
               {/* Payment Methods Section - Mobile Optimized */}
               {activeTab === 'payment' && (
                 <div className="p-4 sm:p-6">
-                  <h2 className="text-xl font-bold mb-6">Payment Methods</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Payment Methods</h2>
                   
                   <button className="w-full sm:w-auto mb-6 flex items-center justify-center sm:justify-start bg-blue-600 text-white px-6 py-3 rounded-lg">
                     <CreditCard className="h-5 w-5 mr-2" />
@@ -207,8 +206,8 @@ export default function Dashboard() {
                         <div className="flex items-center mb-4 sm:mb-0">
                           <CreditCard className="h-8 w-8 text-gray-400 mr-4" />
                           <div>
-                            <p className="font-medium">•••• 4242</p>
-                            <p className="text-sm text-gray-500">Expires 12/24</p>
+                            <p className="font-medium text-gray-900">•••• 4242</p>
+                            <p className="text-sm text-gray-700">Expires 12/24</p>
                           </div>
                         </div>
                         <button className="w-full sm:w-auto mt-4 sm:mt-0 text-red-600 border border-red-600 rounded-lg px-4 py-2 text-sm">
@@ -223,22 +222,22 @@ export default function Dashboard() {
               {/* Recent Orders Section - Mobile Optimized */}
               {activeTab === 'orders' && (
                 <div className="p-4 sm:p-6">
-                  <h2 className="text-xl font-bold mb-6">Recent Orders</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Recent Orders</h2>
                   
                   <div className="space-y-4">
                     {/* Order card - Mobile friendly */}
                     <div className="border rounded-lg p-4">
                       <div className="flex flex-col sm:flex-row sm:justify-between">
                         <div className="mb-4 sm:mb-0">
-                          <h3 className="font-medium">Restaurant Name</h3>
-                          <p className="text-sm text-gray-500">Order #123456</p>
-                          <p className="text-sm text-gray-500">March 10, 2024</p>
+                          <h3 className="font-medium text-gray-900">Restaurant Name</h3>
+                          <p className="text-sm text-gray-700">Order #123456</p>
+                          <p className="text-sm text-gray-700">March 10, 2024</p>
                         </div>
                         <div className="flex flex-col sm:items-end">
                           <span className="bg-green-100 text-green-800 text-sm px-3 py-1 rounded-full inline-flex items-center justify-center mb-2 sm:mb-0">
                             Completed
                           </span>
-                          <p className="text-lg font-medium mt-2">$45.00</p>
+                          <p className="text-lg font-medium text-gray-900">$45.00</p>
                         </div>
                       </div>
                     </div>
@@ -249,7 +248,7 @@ export default function Dashboard() {
               {/* Security Section - Mobile Optimized */}
               {activeTab === 'security' && (
                 <div className="p-4 sm:p-6">
-                  <h2 className="text-xl font-bold mb-6">Security</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Security</h2>
                   
                   <form className="space-y-4">
                     <div>
@@ -258,7 +257,7 @@ export default function Dashboard() {
                       </label>
                       <input
                         type="password"
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base text-gray-900"
                       />
                     </div>
                     
@@ -268,7 +267,7 @@ export default function Dashboard() {
                       </label>
                       <input
                         type="password"
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base text-gray-900"
                       />
                     </div>
                     
@@ -278,7 +277,7 @@ export default function Dashboard() {
                       </label>
                       <input
                         type="password"
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base text-gray-900"
                       />
                     </div>
                     
@@ -297,7 +296,7 @@ export default function Dashboard() {
               {/* Support Section - Mobile Optimized */}
               {activeTab === 'support' && (
                 <div className="p-4 sm:p-6">
-                  <h2 className="text-xl font-bold mb-6">Support</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Support</h2>
                   
                   <form className="space-y-4">
                     <div>
@@ -306,7 +305,7 @@ export default function Dashboard() {
                       </label>
                       <input
                         type="text"
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base text-gray-900"
                         placeholder="What do you need help with?"
                       />
                     </div>
@@ -317,7 +316,7 @@ export default function Dashboard() {
                       </label>
                       <textarea
                         rows={4}
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-base text-gray-900"
                         placeholder="Describe your issue..."
                       />
                     </div>
