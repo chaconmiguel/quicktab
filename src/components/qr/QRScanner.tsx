@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { useRouter } from 'next/navigation';
 import { X, Camera } from 'lucide-react';
 
@@ -22,7 +22,7 @@ export default function QRScanner({ onClose }: QRScannerProps) {
       try {
         scannerRef.current = new Html5Qrcode('qr-reader', {
           verbose: false,
-          formatsToSupport: [Html5Qrcode.QrcodeFormat.QR_CODE]
+          formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
         });
         
         const config = {
